@@ -1,0 +1,22 @@
+{
+    "name": "hermawan/codeigniter4-datatables",
+    "description": "Serverside Datatables library for CodeIgniter4",
+    "type": "library",
+    "require": {
+        "php": ">=7.3",
+        "codeigniter4/framework": "^4"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hermawan Ramadhan",
+            "email": "hermawanramadhan@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Hermawan\\DataTables\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
