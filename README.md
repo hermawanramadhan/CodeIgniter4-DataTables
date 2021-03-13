@@ -29,17 +29,21 @@ $psr4 = [
 
 ## Simple Initializing
 
-This is simple basic code just write `DataTable::of($builder)` call method `toJson()` for output 
+This is simple basic code just write `DataTable::of($builder)` call method `toJson()` for output
+
 `$builder` is CodeIgniter build-in Query Builder object.
 
 **Controller :**
 ```php
 use \Hermawan\DataTables\DataTable;
 
-$db = db_connect();
-$queryBuilder = $db->table('users');
+public function basic()
+{
+    $db = db_connect();
+    $builder = $db->table('customers')->select('customerNumber, customerName, phone, city, country, postalCode');
 
-DataTable::of($queryBuilder)->toJson();
+    return DataTable::of($builder)->toJson();
+}
 ```
 
 **Javascript :**
