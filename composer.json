@@ -18,5 +18,5 @@
             "Hermawan\\DataTables\\": "src/"
         }
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "dev"
 }
