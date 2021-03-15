@@ -4,7 +4,8 @@
     "type": "library",
     "require": {
         "php": "^7.3",
-        "codeigniter4/framework": "^4"
+        "codeigniter4/framework": "^4",
+        "greenlion/php-sql-parser": "^4.3"
     },
     "license": "MIT",
     "authors": [

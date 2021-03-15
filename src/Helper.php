@@ -12,7 +12,7 @@ class Helper
 			return $object->$varName;
 		else
 		{
-			$rp->setAccessible(true);
+			$rp->setAccessible(TRUE);
 			return $rp->getValue($object);
 		}
 

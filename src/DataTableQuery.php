@@ -1,11 +1,15 @@
 <?php 
 namespace Hermawan\DataTables;
 
+use \PHPSQLParser\PHPSQLParser;
 
 class DataTableQuery
 {
 
     private $builder;
+    private $baseSQL;
+    private $baseSQLParsed;
+
     private $countResult;
     private $returnAsObject = FALSE;
     private $tableField = [];
@@ -30,7 +34,7 @@ class DataTableQuery
 
     public function addNumbering($column)
     {
-        $this->numbering = true;
+        $this->numbering = TRUE;
         $this->numberingColumn = $column;
 
         if($column !== NULL)
@@ -210,7 +214,29 @@ class DataTableQuery
         if($dtOrders)
         {
 
-            $orderableColumns = $this->getColumns();
+            $orderableColumns = [];
+            $columns = $this->getColumns();
+
+            if($this->returnAsObject)
+            {
+                foreach (DataTable::request('columns') as $dtColumn) 
+                {
+                    if($dtColumn['name'])
+                        $orderableColumns[] = $dtColumn['name'];
+
+                    elseif(in_array($dtColumn['data'], $columns))
+                        $orderableColumns[] = array_search($dtColumn['data'], $columns);
+
+                    else
+                        $orderableColumns[] = $dtColumn['data'];
+
+                }
+            }
+            else
+            {
+                foreach ($columns as $column => $alias) 
+                    $orderableColumns[] = $column;
+            }
 
             foreach ($dtOrders as $order)
             {
@@ -233,7 +259,6 @@ class DataTableQuery
 
         if($searchValue)
         {
-            $doQuerying = TRUE;
 
             if($this->searchableColumns !== NULL)
             {
@@ -242,16 +267,45 @@ class DataTableQuery
                                    : explode(",",$this->searchableColumns);
             }
             else
-                $searchableColumns = $this->getColumns();
+            {
+                $columns = $this->getColumns();
+
+                if($this->returnAsObject)
+                {
+                    foreach (DataTable::request('columns') as $dtColumn) 
+                    {
+                        if($dtColumn['name'])
+                            $searchableColumns[] = $dtColumn['name'];
+
+                        elseif(in_array($dtColumn['data'], $columns))
+                            $searchableColumns[] = array_search($dtColumn['data'], $columns);
+
+                        else
+                            $searchableColumns[] = $dtColumn['data'];
+
+                    }
+                }
+                else
+                {
+                    foreach ($columns as $column => $alias) 
+                        $searchableColumns[] = $column;
+                }
+            }
 
             if(! empty($searchableColumns))
             {
-                $dtColumns = DataTable::request('columns');
+                $doQuerying = TRUE;
+                $dtColumns  = DataTable::request('columns');
+                
                 $builder->groupStart(); 
                 foreach ($searchableColumns as $index => $column)
                 {
-                    if(! in_array($column, $this->extraColumn) && $dtColumns[$index]['searchable'] === 'true')
+                    if(! in_array($column, $this->extraColumn)
+                        && ($this->searchableColumns !== NULL 
+                            || $dtColumns[$index]['searchable'] === 'true')) 
+                    {
                         $builder->orLike(trim($column), $searchValue);
+                    }
                 }
                 $builder->groupEnd();
             }
@@ -287,6 +341,27 @@ class DataTableQuery
 
     /* End Querying */
 
+    private function getBaseSQL()
+    {
+        if($this->baseSQL === NULL)
+            $this->baseSQL = $this->builder->getCompiledSelect(false);
+
+        return $this->baseSQL;
+    }
+
+    private function getBaseSQLParsed()
+    {   
+        if($this->baseSQLParsed === NULL)
+        {
+            $baseSQL = $this->getBaseSQL();
+            $parser = new PHPSQLParser();
+
+            $this->baseSQLParsed = $parser->parse($baseSQL);
+        }
+        
+        return $this->baseSQLParsed;
+    }
+
     private function getColumns() //for query or for result
     {
 
@@ -295,63 +370,51 @@ class DataTableQuery
 
         $columns   = [];
 
-        if($this->returnAsObject)
-        {
-            foreach (DataTable::request('columns') as $column) 
-                $columns[] = $column['name'] ? $column['name'] : $column['data'];
-
-            $this->columns = $columns;
-            return $columns;
-        }
-
-        
         $builder  = $this->builder;
         $QBSelect = Helper::getObjectPropertyValue($builder, 'QBSelect');
         $QBFrom   = Helper::getObjectPropertyValue($builder, 'QBFrom');
         $QBJoin   = Helper::getObjectPropertyValue($builder, 'QBJoin');
-        
-        if( ! empty($QBSelect))
+
+        $sqlParsed  = $this->getBaseSQLParsed();
+
+        if( ! empty($QBSelect) )
         {
 
-            foreach ($QBSelect as $select) 
+            foreach ($sqlParsed['SELECT'] as $index => $select) 
             {
-                //if subquery or something like if concat not yet support
 
-                if (strpos($select, '*') !== false) 
+                // if select column
+                if ($select['expr_type'] == 'colref')
                 {
-                    $table = str_replace("*", "", $select);
-                    $table = str_replace(".", "", $table);
-                    $table = str_replace(" ", "", $table);
-
-                    $fieldData = $this->getTableField($table);
-
-                    foreach ($fieldData as $field)
+                    //if have select all (*) query
+                    if(strpos($select['base_expr'], '*') !== FALSE)
                     {
-                        if( ! in_array($field->name, $this->columnsRemoved))
-                            $columns[] = $table.'.'.$field->name;
+                        $fieldData = $this->getTableField($select['no_quotes']['parts'][0]);
+                        foreach ($fieldData as $field)
+                        {
+                            if( ! in_array($field->name, $this->columnsRemoved))
+                                $columns[$table.'.'.$field->name] = $field->name;
+                        }
+
                     }
+                    else
+                        $columns[$select['base_expr']] = (! empty($select['alias']) ? end($select['alias']['no_quotes']['parts']) : end($select['no_quotes']['parts']) );
 
-                }
-                elseif (strpos($select, ' as ') !== false)
-                {
-                    list($select, $alias) = explode(' as ', $select);
-
-                    if( ! in_array($field->name, $this->columnsRemoved))
-                        $columns[] = $select;
-                } 
-                elseif (strpos($select, ' ') !== false)
-                {
-                    list($select, $alias) = explode(" ", $select);
-
-                    if( ! in_array($field->name, $this->columnsRemoved))
-                        $columns[] = $select;
                 }
                 else
                 {
-                    if( ! in_array($select, $this->columnsRemoved))
-                        $columns[] = $select;
-                }
+                    $column = $QBSelect[$index];
                     
+                    if(! empty($select['alias']) 
+                        && substr($column, -1*(strlen($select['alias']['base_expr']))) == $select['alias']['base_expr'])
+                    {
+                        $column = substr($column, 0,-1*(strlen($select['alias']['base_expr'])));
+                        $alias = end($select['alias']['no_quotes']['parts']);
+                    }else
+                        $alias = $column;
+
+                    $columns[$column] = $alias;
+                }
                 
             }
 
@@ -365,7 +428,7 @@ class DataTableQuery
                 foreach ($fieldData as $field)
                 {
                     if( ! in_array($field->name, $this->columnsRemoved))
-                        $columns[] = $table.'.'.$field->name;
+                        $columns[$table.'.'.$field->name] = $field->name;
                 } 
             }
 
@@ -375,7 +438,7 @@ class DataTableQuery
                 foreach ($fieldData as $field)
                 {
                     if( ! in_array($field->name, $this->columnsRemoved))
-                        $columns[] = $table.'.'.$field->name;
+                        $columns[$table.'.'.$field->name] = $field->name;
                 }
             }
             
@@ -384,21 +447,8 @@ class DataTableQuery
 
         foreach ($this->columnsAdded as $column) 
         {
-            switch ($column['position']) {
-                case 'first':
-                    array_unshift($columns, $column['name']);
-                    break;
-                case 'last':
-                    $columns[] = $column['name'];
-                    break;
-                default:
-                    array_splice( $columns, $column['position'], 0, [$column['name']]);
-                    break;
-            }
-
+            $columns[$column['name']] = $column['name'];
         }
-
-        $columns = array_values($columns);
 
         $this->columns = $columns;
         return $columns;
@@ -406,12 +456,11 @@ class DataTableQuery
 
     private function getTableField($table)
     {
-        if(array_key_exists($table, $this->tableField))
-            return $this->tableField[$table];
-        
-        $db = \Config\Database::connect();
-        $this->tableField[$table] = $db->getFieldData($table);
-        
+        if( ! array_key_exists($table, $this->tableField))
+        {
+            $db = \Config\Database::connect();
+            $this->tableField[$table] = $db->getFieldData($table);
+        }
         return $this->tableField[$table];
 
     }
