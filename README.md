@@ -37,7 +37,7 @@ This is simple basic code just write `DataTable::of($builder)` call method `toJs
 ```php
 use \Hermawan\DataTables\DataTable;
 
-public function basic()
+public function ajaxDatatable()
 {
     $db = db_connect();
     $builder = $db->table('customers')->select('customerNumber, customerName, phone, city, country, postalCode');
@@ -52,7 +52,7 @@ $(document).ready(function() {
     $('#table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: 'https://hermawan.dev/codeigniter4-datatables/ajax-datatable/basic'
+        ajax: '<?php echo site_url('customers/ajaxDatatable'); ?>'
     });
 });
 ```
