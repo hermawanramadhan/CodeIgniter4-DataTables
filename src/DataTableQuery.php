@@ -23,6 +23,7 @@ class DataTableQuery
     private $numberingColumn;
     private $filterFunction;
     private $searchableColumns;
+    private $addedSearchableColumns = [];
 
 
     public function __construct($builder)
@@ -50,6 +51,14 @@ class DataTableQuery
     public function setSearchableColumns($columns)
     {
         $this->searchableColumns = $columns;
+    }
+
+    public function addSearchableColumns($columns)
+    {
+        if(is_array($columns))
+            $this->addedSearchableColumns = array_merge($this->addedSearchableColumns, $columns);
+        else
+            $this->addedSearchableColumns[] = $columns;
     }
 
     public function addColumn($column, $callback, $position)
@@ -290,6 +299,9 @@ class DataTableQuery
                     foreach ($columns as $column => $alias) 
                         $searchableColumns[] = $column;
                 }
+
+                if(! empty($this->addedSearchableColumns))
+                    $searchableColumns = array_merge($searchableColumns, $this->addedSearchableColumns);
             }
 
             if(! empty($searchableColumns))

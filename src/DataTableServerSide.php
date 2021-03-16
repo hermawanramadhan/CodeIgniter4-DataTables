@@ -55,6 +55,16 @@ class DataTableServerSide
         return $this;
     }
 
+    /**
+     * Add Searchable columns
+     * @param String|Array
+     */
+    public function addSearchableColumns($columns)
+    {
+        $this->query->addSearchableColumns($columns);
+        return $this;
+    }
+
      /**
      * Add extra column 
      *
