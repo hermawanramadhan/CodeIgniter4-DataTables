@@ -387,10 +387,11 @@ class DataTableQuery
         $QBFrom   = Helper::getObjectPropertyValue($builder, 'QBFrom');
         $QBJoin   = Helper::getObjectPropertyValue($builder, 'QBJoin');
 
-        $sqlParsed  = $this->getBaseSQLParsed();
 
         if( ! empty($QBSelect) )
         {
+            
+            $sqlParsed  = $this->getBaseSQLParsed();
 
             foreach ($sqlParsed['SELECT'] as $index => $select) 
             {
