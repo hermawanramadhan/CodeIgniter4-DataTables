@@ -20,7 +20,7 @@ Or If you prefer not to use Composer to install, you can install manually.
 Download this from git repository. Extract and rename folder to `codeigniter4-datatables` in example place this on `ThirdParty` folder. 
 
 also this library need download dependency: 
-- this library require php-sql-parser. download here https://github.com/greenlion/PHP-SQL-Parser Extract and rename folder to codeigniter4-datatables in example place this on `ThirdParty` folder. Extract and rename also to php-sql-parser.
+- this library require `php-sql-parser`. download here https://github.com/greenlion/PHP-SQL-Parser Extract and rename also to `php-sql-parser`.
 Then open `app/Config/Autoload.php` and add namespace to the `$psr4` array.
 
 ```php
