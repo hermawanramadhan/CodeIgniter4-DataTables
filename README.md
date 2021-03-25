@@ -9,7 +9,7 @@ For more complete example and demo please visit [Documentation here](https://her
 * Codeigniter 4.x
 * jQuery DataTables v1.10.x
 
-## Installing using composer
+## Installing using composer (recommended)
 Use composer to install CodeIgniter4-DataTables into your project :
 
   > composer require hermawan/codeigniter4-datatables
