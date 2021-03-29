@@ -312,7 +312,8 @@ class DataTableQuery
                 $builder->groupStart(); 
                 foreach ($searchableColumns as $index => $column)
                 {
-                    if(! in_array($column, $this->extraColumn)
+                    if($column != '' 
+                        && ! in_array($column, $this->extraColumn)
                         && ($this->searchableColumns !== NULL 
                             || $dtColumns[$index]['searchable'] === 'true')) 
                     {
