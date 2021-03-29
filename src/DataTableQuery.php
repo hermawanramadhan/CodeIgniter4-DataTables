@@ -141,7 +141,7 @@ class DataTableQuery
                
                 foreach ($row as $key => $value) 
                 {
-                    if(in_array($key, $columns) && ! in_array($key, $this->columnsRemoved))
+                    if(! in_array($key, $this->columnsRemoved))
                     {
                         if(isset($this->columnsEdited[$key]))
                             $data[$key] = $this->columnsEdited[$key]($row);
