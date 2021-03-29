@@ -9,7 +9,7 @@ For more complete example and demo please visit [Documentation here](https://her
 * Codeigniter 4.x
 * jQuery DataTables v1.10.x
 
-## Installing using composer
+## Installing using composer (recommended)
 Use composer to install CodeIgniter4-DataTables into your project :
 
   > composer require hermawan/codeigniter4-datatables
@@ -17,15 +17,18 @@ Use composer to install CodeIgniter4-DataTables into your project :
 
 ### Manual installation
 Or If you prefer not to use Composer to install, you can install manually. 
-Download this from git repository. 
-Extract and rename folder to `codeigniter4-datatables` in example place this on `ThirdParty` folder. 
+Download this from git repository. Extract and rename folder to `codeigniter4-datatables` in example place this on `ThirdParty` folder. 
+
+also this library need download dependency: 
+- this library require `php-sql-parser`. download here https://github.com/greenlion/PHP-SQL-Parser Extract and rename also to `php-sql-parser`.
 Then open `app/Config/Autoload.php` and add namespace to the `$psr4` array.
 
 ```php
 $psr4 = [
      APP_NAMESPACE => APPPATH, // For custom app namespace
      'Config'      => APPPATH . 'Config',
-     'Hermawan\DataTables'   => APPPATH .'ThirdParty/codeigniter4-datatables/src', // <-- add this line
+     'PHPSQLParser'          => APPPATH .'ThirdParty/php-sql-parser/src/PHPSQLParser', // <-- namespace for php-sql-parser
+     'Hermawan\DataTables'   => APPPATH .'ThirdParty/codeigniter4-datatables/src', // <-- namespace for this library
 ];
 ```
 
