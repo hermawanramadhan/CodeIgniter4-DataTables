@@ -263,10 +263,43 @@ class DataTableQuery
     {
         $doQuerying = FALSE;
 
+        $columns = $this->getColumns();
+
+        //individual column search (multi column search)
+        foreach (DataTable::request('columns') as $index => $dtColumn) 
+        {
+            
+            if($dtColumn['search']['value'] != '')
+            {
+
+                if($this->returnAsObject)
+                {
+                    if($dtColumn['name'])
+                        $column = trim($dtColumn['name']);
+                    elseif(in_array($dtColumn['data'], $columns))
+                        $column = array_search($dtColumn['data'], $columns);
+
+                    else
+                        $column = $dtColumn['data'];
+                }
+                else
+                {
+                    $keyColumns = array_keys($columns);
+                    $column = $keyColumns[$index];
+                }
+
+                
+
+                $builder->like(trim($column), $dtColumn['search']['value']);
+                $doQuerying = TRUE;
+            }
+        }
+
+        //global search
         $dtSearch    = DataTable::request('search');
         $searchValue = $dtSearch['value'];
 
-        if($searchValue)
+        if($searchValue != '')
         {
 
             if($this->searchableColumns !== NULL)
@@ -277,7 +310,6 @@ class DataTableQuery
             }
             else
             {
-                $columns = $this->getColumns();
 
                 if($this->returnAsObject)
                 {
