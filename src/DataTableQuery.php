@@ -444,7 +444,13 @@ class DataTableQuery
 
                     }
                     else
-                        $columns[$select['base_expr']] = (! empty($select['alias']) ? end($select['alias']['no_quotes']['parts']) : end($select['no_quotes']['parts']) );
+                    {
+
+                        $fieldName = (! empty($select['alias']) ? end($select['alias']['no_quotes']['parts']) : end($select['no_quotes']['parts']) );
+
+                        if( ! in_array($fieldName, $this->columnsRemoved))
+                            $columns[$select['base_expr']] = $fieldName;
+                    }
 
                 }
                 else
