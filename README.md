@@ -1,4 +1,9 @@
 # CodeIgniter4 DataTables Library
+[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://www.paypal.me/mbahcoding)
+[![Total Downloads](https://poser.pugx.org/hermawan/codeigniter4-datatables/downloads)](https://packagist.org/packages/hermawan/codeigniter4-datatables)
+![GitHub repo size](https://img.shields.io/github/repo-size/hermawanramadhan/CodeIgniter4-DataTables?label=size)
+![GitHub](https://img.shields.io/github/license/hermawanramadhan/CodeIgniter4-DataTables)
+
 Server-side Datatables library for CodeIgniter4 PHP framework
 CodeIgniter4-DataTables is CodeIgniter4 Library to handle server-side processing of DataTables jQuery Plugin via AJAX option by using Query Builder CodeIgniter 4
 
