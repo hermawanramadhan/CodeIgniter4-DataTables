@@ -3,9 +3,9 @@
     "description": "Serverside Datatables library for CodeIgniter4",
     "type": "library",
     "require": {
-        "php": "^7.3",
+        "php": ">=7.3",
         "codeigniter4/framework": "^4",
-        "greenlion/php-sql-parser": "^4.3"
+        "greenlion/php-sql-parser": ">=4.4"
     },
     "license": "MIT",
     "authors": [
