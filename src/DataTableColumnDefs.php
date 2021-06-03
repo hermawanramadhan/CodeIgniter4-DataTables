@@ -221,6 +221,7 @@ class DataTableColumnDefs
                 }
             }
 
+            print_r($searchableColumns);
             return $searchableColumns;
           
         }
@@ -273,7 +274,7 @@ class DataTableColumnDefs
 
                         $alias = ! empty($selectParsed['alias']) ? end($selectParsed['alias']['no_quotes']['parts']) : end($selectParsed['no_quotes']['parts']);
 
-                        $key    = $selectParsed['base_expr'];
+                        $key    = $selectParsed['no_quotes']['parts'][0];
                         $alias  = $alias;
 
                     }
