@@ -273,7 +273,10 @@ class DataTableColumnDefs
 
                         $alias = ! empty($selectParsed['alias']) ? end($selectParsed['alias']['no_quotes']['parts']) : end($selectParsed['no_quotes']['parts']);
 
-                        $key    = $selectParsed['no_quotes']['parts'][0];
+                        $key    = count($selectParsed['no_quotes']['parts']) == 2 ? 
+                                  $selectParsed['no_quotes']['parts'][0].'.'.$selectParsed['no_quotes']['parts'][1] :
+                                  $selectParsed['no_quotes']['parts'][0];
+                                  
                         $alias  = $alias;
 
                     }
