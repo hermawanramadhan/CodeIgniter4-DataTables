@@ -221,7 +221,6 @@ class DataTableColumnDefs
                 }
             }
 
-            print_r($searchableColumns);
             return $searchableColumns;
           
         }
