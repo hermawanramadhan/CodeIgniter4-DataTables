@@ -14,7 +14,7 @@ class DataTableQuery
     private $postQuery;
 
     private $countResult;
-    
+
     private $doQueryFilter = FALSE;
 
 
@@ -44,25 +44,24 @@ class DataTableQuery
 
 
    /* Generating result */
-    
 
     public function countAll()
     {
     	$builder = clone $this->builder;
 
-        $this->countResult = $this->countResult !== NULL ? $this->countResult : $builder->countAllResults();  
-        return $this->countResult;	
+        $this->countResult = $this->countResult !== NULL ? $this->countResult : $builder->countAllResults();
+        return $this->countResult;
     }
 
     public function countFiltered()
     {
         $builder = clone $this->builder;
-        
-        $this->queryFilterSearch($builder);
-         
-        $this->countResult = ($this->countResult !== NULL && ! $this->doQueryFilter) ? $this->countResult : $builder->countAllResults();  
 
-        return $this->countResult;    
+        $this->queryFilterSearch($builder);
+
+        $this->countResult = ($this->countResult !== NULL && ! $this->doQueryFilter) ? $this->countResult : $builder->countAllResults();
+
+        return $this->countResult;
     }
 
     public function getDataResult()
@@ -70,33 +69,33 @@ class DataTableQuery
         $queryResult = $this->queryResult();
         $result      = [];
 
-        foreach ($queryResult as $row) 
+        foreach ($queryResult as $row)
         {
             $data    = [];
             $columns = $this->columnDefs->getColumns();
 
-            foreach ($columns as $column) 
+            foreach ($columns as $column)
             {
                 switch ($column->type) {
                     case 'numbering':
                         $value = $this->columnDefs->getNumbering();
                         break;
-                    
+
                     case 'add':
                         $callback = $column->callback;
                         $value    = $callback($row);
                         break;
-                    
+
                     case 'edit':
                         $callback = $column->callback;
                         $value    = $callback($row);
                         break;
-                    
+
                     case 'format':
                         $callback = $column->callback;
                         $value    = $callback($row->{$column->alias});
                         break;
-                    
+
                     default:
                         $value = $row->{$column->alias};
                         break;
@@ -106,7 +105,6 @@ class DataTableQuery
                     $data[$column->alias] = $value;
                 else
                     $data[] = $value;
-                
             }
 
             $result[] = $data;
@@ -122,11 +120,11 @@ class DataTableQuery
     /* Querying */
 
     private function queryOrder($builder)
-    {   
+    {
 
         $orderables         = $this->columnDefs->getOrderables();
         $oderColumnRequests = Request::get('order');
-        
+
         if($oderColumnRequests)
         {
             foreach ($oderColumnRequests as $request)
@@ -141,14 +139,15 @@ class DataTableQuery
 
     }
 
+
     private function queryFilterSearch($builder)
     {
 
         //individual column search (multi column search)
         $columnRequests = Request::get('columns');
-        foreach ($columnRequests as $index => $request) 
+        foreach ($columnRequests as $index => $request)
         {
-            
+
             if($request['search']['value'] != '')
             {
                 $column              = $this->columnDefs->getSearchRequest($index, $request);
@@ -168,11 +167,11 @@ class DataTableQuery
             if(! empty($searchable))
             {
                 $this->doQueryFilter = TRUE;
-                
-                $builder->groupStart(); 
+
+                $builder->groupStart();
                 foreach ($searchable as $column)
                     $builder->orLike(trim($column), $searchRequest['value']);
-                
+
                 $builder->groupEnd();
             }
 
@@ -180,6 +179,7 @@ class DataTableQuery
 
         $this->queryFilter($builder);
     }
+
 
     private function queryFilter($builder)
     {
@@ -201,7 +201,7 @@ class DataTableQuery
 
         $this->queryOrder($builder);
 
-        if(Request::get('length') != -1) 
+        if(Request::get('length') != -1)
             $builder->limit(Request::get('length'), Request::get('start'));
 
         $this->queryFilterSearch($builder);
@@ -216,6 +216,5 @@ class DataTableQuery
     }
 
     /* End Querying */
-  
 
 }   // End of DataTableQuery Class.

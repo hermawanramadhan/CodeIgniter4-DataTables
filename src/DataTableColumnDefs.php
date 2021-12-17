@@ -12,10 +12,12 @@ class DataTableColumnDefs
 
     public $returnAsObject = FALSE;
 
+
     public function __construct($builder)
     {
         $this->initFromBuilder($builder);
     }
+
 
     public function returnAsObject($returnAsObject)
     {
@@ -35,8 +37,8 @@ class DataTableColumnDefs
         $column->orderable  = FALSE;
 
         array_unshift($this->columns, $column);
-
     }
+
 
     public function add($key, $callback, $position)
     {
@@ -50,22 +52,21 @@ class DataTableColumnDefs
         $column->callback   = $callback;
 
         switch ($position) {
-           
+
             case 'first':
                 array_unshift($this->columns, $column);
                 break;
-           
+
             case 'last':
                 $this->columns[] = $column;
                 break;
-           
+
             default:
                 array_splice( $this->columns, $position, 0, $column);
                 break;
         }
-
-        
     }
+
 
     public function edit($alias, $callback)
     {
@@ -77,10 +78,9 @@ class DataTableColumnDefs
                 $column->type     = 'edit';
                 $column->callback = $callback;
             }
-            
         }
-        
     }
+
 
     public function format($alias, $callback)
     {
@@ -92,16 +92,15 @@ class DataTableColumnDefs
                 $column->type     = 'format';
                 $column->callback = $callback;
             }
-            
         }
-        
     }
+
 
     public function remove($alias)
     {
         if(! is_array($alias))
             $aliases = [$alias];
-       
+
         foreach ($this->columns as $index => $column) 
         {
             if(in_array($column->alias, $aliases))
@@ -113,11 +112,13 @@ class DataTableColumnDefs
         $this->columns = array_values($this->columns);
     }
 
+
     public function setSearchable($searchable)
     {
         $this->searchableColumns = $searchable;
         return $this;
     }
+
 
     public function addSearchable($searchable)
     {
@@ -127,10 +128,12 @@ class DataTableColumnDefs
             $this->searchableColumns[] = $searchable;
     }
 
+
     public function getColumns()
     {
         return $this->columns;
     }
+
 
     public function getOrderables()
     {
@@ -148,9 +151,7 @@ class DataTableColumnDefs
 
                 else
                     $orderableColumns[] = $columnRequest['data'];
-
             }
-           
         }
         else
         {
@@ -159,17 +160,16 @@ class DataTableColumnDefs
         }
 
         return $orderableColumns;
-
     }
+
 
     public function getSearchRequest($index, $request)
     {
-
         if($this->returnAsObject)
         {
             if($request['name'])
                 return trim($request['name']);
-            
+
             elseif($column = $this->getColumnBy('alias', $request['data']))
                 return $column->key;
 
@@ -182,6 +182,7 @@ class DataTableColumnDefs
         }
     }
 
+
     public function getSearchable()
     {
         if($this->searchableColumns !== NULL)
@@ -192,14 +193,14 @@ class DataTableColumnDefs
         {
             $searchableColumns = [];
 
-            foreach (Request::get('columns') as $index => $request) 
+            foreach (Request::get('columns') as $index => $request)
             {
                 if($request['searchable'] == 'true')
                 {
                     if($this->returnAsObject)
                     {
                          if($request['name'])
-                            $searchableColumns[] = trim($request['name']); 
+                            $searchableColumns[] = trim($request['name']);
 
                         elseif($column = $this->getColumnBy('alias', $request['data']))
                         {
@@ -215,18 +216,14 @@ class DataTableColumnDefs
                         $column = $this->columns[$index];
                         if($column->searchable)
                             $searchableColumns[] = $column->key;
-
                     }
-                    
                 }
             }
 
             return $searchableColumns;
-          
         }
-
-
     }
+
 
     public function getNumbering()
     {
@@ -235,9 +232,8 @@ class DataTableColumnDefs
     }
 
 
-    public function initFromBuilder($builder) 
+    public function initFromBuilder($builder)
     {
-
         $QBSelect = Helper::getObjectPropertyValue($builder, 'QBSelect');
 
         if( ! empty($QBSelect) )
@@ -246,63 +242,51 @@ class DataTableColumnDefs
             $parser     = new \PHPSQLParser\PHPSQLParser();
             $sqlParsed  = $parser->parse($baseSQL);
 
-            foreach ($sqlParsed['SELECT'] as $index => $selectParsed) 
-            {   
-
+            foreach ($sqlParsed['SELECT'] as $index => $selectParsed)
+            {
                 $column = new Column();
 
                 // if select column
                 if ($selectParsed['expr_type'] == 'colref')
                 {
-
                     //if have select all (*) query
                     if(strpos($selectParsed['base_expr'], '*') !== FALSE)
                     {
                         $fieldData = $builder->db()->getFieldData($selectParsed['no_quotes']['parts'][0]);
                         foreach ($fieldData as $field)
                         {
-                            
                             $key    = $selectParsed['no_quotes']['parts'][0].'.'.$field->name;
                             $alias  = $field->name;
-                            
                         }
-
                     }
                     else
                     {
-
                         $alias = ! empty($selectParsed['alias']) ? end($selectParsed['alias']['no_quotes']['parts']) : end($selectParsed['no_quotes']['parts']);
 
-                        $key    = count($selectParsed['no_quotes']['parts']) == 2 ? 
+                        $key   = count($selectParsed['no_quotes']['parts']) == 2 ?
                                   $selectParsed['no_quotes']['parts'][0].'.'.$selectParsed['no_quotes']['parts'][1] :
                                   $selectParsed['no_quotes']['parts'][0];
-                                  
+
                         $alias  = $alias;
-
                     }
-
                 }
                 elseif ($selectParsed['expr_type'] == 'function')
                 {
-
                     $key   = $selectParsed['base_expr'];
                     $key  .= '(';
 
                     $arrayKey = [];
-                    
-                    foreach ($selectParsed['sub_tree'] as $sub_tree) 
+
+                    foreach ($selectParsed['sub_tree'] as $sub_tree)
                         $arrayKey[] = $sub_tree['base_expr'];
 
                     $key  .= implode($selectParsed['delim'].' ', $arrayKey);
                     $key  .= ')';
 
                     $alias = ! empty($selectParsed['alias']) ? end($selectParsed['alias']['no_quotes']['parts']) : $key;
-
-
                 }
                 else
                 {
-
                     if( ! empty($selectParsed['alias']) )
                     {
                         $key    = substr($QBSelect[$index], 0,-1*(strlen($selectParsed['alias']['base_expr'])));
@@ -312,41 +296,20 @@ class DataTableColumnDefs
                     {
                         $key    = $QBSelect[$index];
                         $alias  = $key;
-
                     }
-
                 }
 
                 $column->key     = $key;
                 $column->alias   = $alias;
                 $this->columns[] = $column;
-                
             }
-
         }
         else
         {
-
             $QBFrom   = Helper::getObjectPropertyValue($builder, 'QBFrom');
             $QBJoin   = Helper::getObjectPropertyValue($builder, 'QBJoin');
 
-            foreach ($QBFrom as $table) 
-            {
-                $fieldData = $builder->db()->getFieldData($table);
-                foreach ($fieldData as $field)
-                {
-
-                    $column = new Column();
-
-                    $column->key     = $table.'.'.$field->name;
-                    $column->alias   = $field->name;
-
-                    $this->columns[] = $column;
-
-                } 
-            }
-
-            foreach ($QBJoin as $table) 
+            foreach ($QBFrom as $table)
             {
                 $fieldData = $builder->db()->getFieldData($table);
                 foreach ($fieldData as $field)
@@ -359,21 +322,33 @@ class DataTableColumnDefs
                     $this->columns[] = $column;
                 }
             }
-            
+
+            foreach ($QBJoin as $table)
+            {
+                $fieldData = $builder->db()->getFieldData($table);
+                foreach ($fieldData as $field)
+                {
+                    $column = new Column();
+
+                    $column->key     = $table.'.'.$field->name;
+                    $column->alias   = $field->name;
+
+                    $this->columns[] = $column;
+                }
+            }
         }
 
         return $this;
     }
 
+
     public function getColumnBy($by, $value)
     {
-        foreach ($this->columns as $column) 
+        foreach ($this->columns as $column)
         {
             if($column->$by == $value)
                 return $column;
         }
         return NULL;
     }
-  
-
 }   // End of DataTableColumnDefs Class.

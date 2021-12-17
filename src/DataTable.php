@@ -6,23 +6,23 @@ use \Config\Services;
 class DataTable
 {
 
-     /**
+    /**
      * DataTableQuery object.
      *
      * @var \Hermawan\CodeIgniter4-DataTable\DataTableQuery
      */
-    private $query; 
+    private $query;
 
 
-     /**
+    /**
      * DataTablColumns object.
      *
      * @var \Hermawan\CodeIgniter4-DataTable\DataTableColumns
      */
-    private $columnDefs; 
+    private $columnDefs;
 
 
-     /**
+    /**
      * Builder from CodeIgniter Query Builder
      * @param  Builder $builder
      */
@@ -30,13 +30,14 @@ class DataTable
     {
         $this->query      = new DataTableQuery($builder);
         $this->columnDefs = new DataTableColumnDefs($builder);
-        
+
         return $this;
     }
 
+
     /**
      * Make a DataTable instance from builder.
-     *  
+     *
      * Builder from CodeIgniter Query Builder
      * @param  Builder $builder
      */
@@ -44,6 +45,7 @@ class DataTable
     {
         return new self($builder);
     }
+
 
     /**
      * postQuery
@@ -56,7 +58,7 @@ class DataTable
     }
 
     /**
-     * custom Filter 
+     * custom Filter
      * @param Closure function
      */
     public function filter($filterFunction)
@@ -68,7 +70,7 @@ class DataTable
 
     /**
      * Add numbering to first column
-     * @param String $column 
+     * @param String $column
      */
     public function addNumbering($column = NULL)
     {
@@ -76,9 +78,9 @@ class DataTable
         return $this;
     }
 
-   
-     /**
-     * Add extra column 
+
+    /**
+     * Add extra column
      *
      * @param String $column
      * @param Closure $callback
@@ -90,8 +92,9 @@ class DataTable
         return $this;
     }
 
+
     /**
-     * Edit column 
+     * Edit column
      *
      * @param String $column
      * @param Closure $callback
@@ -103,7 +106,7 @@ class DataTable
     }
 
     /**
-     * Format column 
+     * Format column
      *
      * @param String $column
      * @param Closure $callback
@@ -114,8 +117,9 @@ class DataTable
         return $this;
     }
 
-     /**
-     * Hide column 
+
+    /**
+     * Hide column
      *
      * @param String $column
      */
@@ -125,7 +129,8 @@ class DataTable
         return $this;
     }
 
-     /**
+
+    /**
      * Set Searchable columns
      * @param String|Array
      */
@@ -134,6 +139,7 @@ class DataTable
         $this->columnDefs->setSearchable($columns);
         return $this;
     }
+
 
     /**
      * Add Searchable columns
@@ -146,9 +152,8 @@ class DataTable
     }
 
 
-
      /**
-     * Return JSON output 
+     * Return JSON output
      *
      * @param bool $returnAsObject
      * @return JSON
@@ -161,19 +166,18 @@ class DataTable
             return self::throwError('no datatable request detected');
         }
 
-        if($returnAsObject !== NULL) 
+        if($returnAsObject !== NULL)
             $this->columnDefs->returnAsObject($returnAsObject);
 
         $this->query->setColumnDefs($this->columnDefs);
-        
+
         $response = Services::response();
 
         return $response->setJSON([
             'draw'              => Request::get('draw'),
             'recordsTotal'      => $this->query->countAll(),
             'recordsFiltered'   => $this->query->countFiltered(),
-            'data'              => $this->query->getDataResult(),
-
+            'data'              => $this->query->getDataResult()
         ]);
     }
 
@@ -188,11 +192,8 @@ class DataTable
     {
         $response = Services::response();
         return $response->setJSON([
-            'error'             => $message,
-
+            'error' => $message,
         ]);
     }
 
-
-   
 }   // End of DataTables Library Class.
