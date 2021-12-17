@@ -160,12 +160,18 @@ class DataTable
      */
     public function toJson($returnAsObject = NULL)
     {
+        if(Request::get('draw'))
+            return $this->handleDrawRequest($returnAsObject);
 
-        if(! Request::get('draw'))
-        {
-            return self::throwError('no datatable request detected');
-        }
+        else if(Request::get('action'))
+            return $this->handleActionRequest($returnAsObject);
 
+        return self::throwError('no datatable request detected');
+    }
+
+
+    private function handleDrawRequest($returnAsObject)
+    {
         if($returnAsObject !== NULL)
             $this->columnDefs->returnAsObject($returnAsObject);
 
@@ -177,8 +183,41 @@ class DataTable
             'draw'              => Request::get('draw'),
             'recordsTotal'      => $this->query->countAll(),
             'recordsFiltered'   => $this->query->countFiltered(),
-            'data'              => $this->query->getDataResult()
+            'data'              => $this->query->getDataResult(),
         ]);
+    }
+
+
+    private function handleActionRequest($returnAsObject)
+    {
+        if($returnAsObject !== NULL)
+            $this->columnDefs->returnAsObject($returnAsObject);
+
+        $this->query->setColumnDefs($this->columnDefs);
+
+        $data = Request::get('data');
+
+        $response = Services::response();
+
+        switch(Request::get('action')){
+            case 'create':
+                return $response->setJSON([
+                    'data' => $this->query->insertData($data, $this->primaryKey)
+                ]);
+
+            case 'edit':
+                return $response->setJSON([
+                    'data' => $this->query->updateData($data, $this->primaryKey)
+                ]);
+
+            case 'remove':
+                return $response->setJSON([
+                    'data' => $this->query->deleteData($data, $this->primaryKey)
+                ]);
+
+            default:
+                return self::throwError('no datatable request detected');
+        }
     }
 
 

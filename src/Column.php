@@ -10,4 +10,14 @@ class Column{
     public $searchable = TRUE;
     public $orderable = TRUE;
 
+
+    public function __construct($key, $alias, $primaryKey = 'id')
+    {
+        $this->key = $key;
+        $this->alias = $alias;
+
+        if($key === $primaryKey)
+          $this->type = 'primary';
+        }
+    }
 }

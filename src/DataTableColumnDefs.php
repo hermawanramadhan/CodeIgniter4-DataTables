@@ -13,9 +13,9 @@ class DataTableColumnDefs
     public $returnAsObject = FALSE;
 
 
-    public function __construct($builder)
+    public function __construct($builder, $primaryKey)
     {
-        $this->initFromBuilder($builder);
+        $this->initFromBuilder($builder, $primaryKey);
     }
 
 
@@ -232,7 +232,7 @@ class DataTableColumnDefs
     }
 
 
-    public function initFromBuilder($builder)
+    public function initFromBuilder($builder, $primaryKey)
     {
         $QBSelect = Helper::getObjectPropertyValue($builder, 'QBSelect');
 
@@ -299,9 +299,7 @@ class DataTableColumnDefs
                     }
                 }
 
-                $column->key     = $key;
-                $column->alias   = $alias;
-                $this->columns[] = $column;
+                $this->columns[] = new Column($key, $alias, $primaryKey);
             }
         }
         else
@@ -313,28 +311,14 @@ class DataTableColumnDefs
             {
                 $fieldData = $builder->db()->getFieldData($table);
                 foreach ($fieldData as $field)
-                {
-                    $column = new Column();
-
-                    $column->key     = $table.'.'.$field->name;
-                    $column->alias   = $field->name;
-
-                    $this->columns[] = $column;
-                }
+                    $this->columns[] = new Column($table.'.'.$field->name, $field->name, $primaryKey);
             }
 
             foreach ($QBJoin as $table)
             {
                 $fieldData = $builder->db()->getFieldData($table);
                 foreach ($fieldData as $field)
-                {
-                    $column = new Column();
-
-                    $column->key     = $table.'.'.$field->name;
-                    $column->alias   = $field->name;
-
-                    $this->columns[] = $column;
-                }
+                    $this->columns[] = new Column($table.'.'.$field->name, $field->name, $primaryKey);
             }
         }
 

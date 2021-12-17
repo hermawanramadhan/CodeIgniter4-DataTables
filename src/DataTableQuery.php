@@ -17,11 +17,14 @@ class DataTableQuery
 
     private $doQueryFilter = FALSE;
 
+    private const DT_ROW_ID = 'DT_RowId';
+
 
     public function __construct($builder)
     {
         $this->builder = $builder;
     }
+
 
     public function setColumnDefs($columnDefs)
     {
@@ -29,10 +32,12 @@ class DataTableQuery
         return $this;
     }
 
+
     public function postQuery($postQuery)
     {
         $this->postQuery = $postQuery;
     }
+
 
     public function filter($filter)
     {
@@ -63,6 +68,7 @@ class DataTableQuery
 
         return $this->countResult;
     }
+
 
     public function getDataResult()
     {
@@ -101,8 +107,12 @@ class DataTableQuery
                         break;
                 }
 
-                if($this->columnDefs->returnAsObject)
+                if($this->columnDefs->returnAsObject){
                     $data[$column->alias] = $value;
+
+                    if($column->type === 'primary')
+                        $data[self::DT_ROW_ID] = $value;
+                }
                 else
                     $data[] = $value;
             }
@@ -115,6 +125,94 @@ class DataTableQuery
 
     /* End Generating result */
 
+
+    public function insertData($data, $primaryKey)
+    {
+        $builder = clone $this->builder;
+
+        $columns = $this->columnDefs->getColumns();
+
+        $result = [];
+
+        foreach ($data as $key => $rowData) {
+            $row = [];
+            foreach ($columns as $column)
+            {
+                $builder->set($column->key, $rowData[$column->alias]);
+                $row[$column->alias] = $rowData[$column->alias];
+
+                if($column->type === 'primary')
+                    $row[self::DT_ROW_ID] = $rowData[$column->alias];
+            }
+
+            if($builder->insert()){
+                if(!isset($row[self::DT_ROW_ID]))
+                    $row[self::DT_ROW_ID] = $builder->db()->insertID();
+
+                $result[] = $row;
+            }
+
+        }
+
+        return $result;
+    }
+
+
+    public function updateData($data, $primaryKey)
+    {
+        $builder = clone $this->builder;
+
+        $columns = $this->columnDefs->getColumns();
+
+        $result = [];
+
+        foreach ($data as $key => $rowData) {
+            $row = [];
+            foreach ($columns as $column)
+            {
+                $builder->set($column->key, $rowData[$column->alias]);
+                $row[$column->alias] = $rowData[$column->alias];
+
+                if($column->type === 'primary')
+                    $row[self::DT_ROW_ID] = $rowData[$column->alias];
+            }
+
+            $builder->where($primaryKey, $key);
+
+            if($builder->update())
+                $result[] = $row;
+        }
+
+        return $result;
+    }
+
+
+    public function deleteData($data, $primaryKey)
+    {
+        $builder = clone $this->builder;
+
+        $columns = $this->columnDefs->getColumns();
+
+        $result = [];
+
+        foreach ($data as $key => $rowData) {
+            $row = [];
+            foreach ($columns as $column)
+            {
+                $row[$column->alias] = $rowData[$column->alias];
+
+                if($column->type === 'primary')
+                    $row[self::DT_ROW_ID] = $rowData[$column->alias];
+            }
+
+            $builder->where($primaryKey, $key);
+
+            if($builder->delete())
+                $result[] = $row;
+        }
+
+        return $result;
+    }
 
 
     /* Querying */

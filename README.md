@@ -68,7 +68,42 @@ $(document).ready(function() {
     });
 });
 ```
+## Basic Initializing
 
+For basis initializing as seen here https://editor.datatables.net/examples/simple/simple.html. And inorder to activate the editor buttons, just add the primary key as the second parameter to `DataTable::of`
+
+`$builder` is CodeIgniter build-in Query Builder object.
+
+**Controller :**
+```php
+use \Hermawan\DataTables\DataTable;
+
+public function ajaxDatatable()
+{
+    $db = db_connect();
+    $builder = $db->table('customers')->select('customerNumber, customerName, phone, city, country, postalCode');
+
+    $primaryKey = 'id';
+    return DataTable::of($builder, $primaryKey)->toJson();
+}
+```
+
+**Javascript :**
+```javascript
+$(document).ready(function() {
+    $('#table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: '<?php echo site_url('customers/ajaxDatatable'); ?>',
+        select: true,
+        buttons: [
+            { extend: "create", editor: editor },
+            { extend: "edit",   editor: editor },
+            { extend: "remove", editor: editor }
+        ]
+    });
+});
+```
 
 
 For more complete example and demo please visit [Documentation here](https://hermawan.dev/codeigniter4-datatables/)
