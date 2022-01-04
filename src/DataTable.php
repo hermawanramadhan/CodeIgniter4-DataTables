@@ -23,13 +23,21 @@ class DataTable
 
 
     /**
+     * Primary key of the table
+     */
+    private $primaryKey;
+
+
+    /**
      * Builder from CodeIgniter Query Builder
      * @param  Builder $builder
      */
-    public function __construct($builder)
+    public function __construct($builder, $primaryKey = 'id')
     {
         $this->query      = new DataTableQuery($builder);
-        $this->columnDefs = new DataTableColumnDefs($builder);
+        $this->columnDefs = new DataTableColumnDefs($builder, $primaryKey);
+
+        $this->primaryKey = $primaryKey;
 
         return $this;
     }
@@ -41,9 +49,9 @@ class DataTable
      * Builder from CodeIgniter Query Builder
      * @param  Builder $builder
      */
-    public static function of($builder)
+    public static function of($builder, $primaryKey = 'id')
     {
-        return new self($builder);
+        return new self($builder, $primaryKey);
     }
 
 
