@@ -30,8 +30,6 @@ class DataTable
     {
         $this->query      = new DataTableQuery($builder);
         $this->columnDefs = new DataTableColumnDefs($builder);
-        
-        return $this;
     }
 
     /**
