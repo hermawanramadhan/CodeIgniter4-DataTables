@@ -103,9 +103,9 @@ class DataTableQuery
                 }
 
                 if($this->columnDefs->returnAsObject)
-                    $data[$column->alias] = $value;
+                    $data[$column->alias] = esc($value);
                 else
-                    $data[] = $value;
+                    $data[] = esc($value);
                 
             }
 
