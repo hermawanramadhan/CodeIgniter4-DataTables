@@ -98,14 +98,14 @@ class DataTableQuery
                         break;
                     
                     default:
-                        $value = $row->{$column->alias};
+                        $value = esc($row->{$column->alias}); // Escape all other data if not used in formatting types
                         break;
                 }
 
                 if($this->columnDefs->returnAsObject)
-                    $data[$column->alias] = esc($value);
+                    $data[$column->alias] = $value;
                 else
-                    $data[] = esc($value);
+                    $data[] = $value;
                 
             }
 
