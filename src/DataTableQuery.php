@@ -138,11 +138,13 @@ class DataTableQuery
             $row = [];
             foreach ($columns as $column)
             {
-                $builder->set($column->key, $rowData[$column->alias]);
-                $row[$column->alias] = $rowData[$column->alias];
+                if(isset($rowData[$column->alias])){
+                    $builder->set($column->key, $rowData[$column->alias]);
+                    $row[$column->alias] = $rowData[$column->alias];
 
-                if($column->type === 'primary')
-                    $row[self::DT_ROW_ID] = $rowData[$column->alias];
+                    if($column->type === 'primary')
+                        $row[self::DT_ROW_ID] = $rowData[$column->alias];
+                }
             }
 
             if($builder->insert()){
@@ -168,13 +170,10 @@ class DataTableQuery
 
         foreach ($data as $key => $rowData) {
             $row = [];
-            foreach ($columns as $column)
+            foreach ($rowData as $columnKey => $value)
             {
-                $builder->set($column->key, $rowData[$column->alias]);
-                $row[$column->alias] = $rowData[$column->alias];
-
-                if($column->type === 'primary')
-                    $row[self::DT_ROW_ID] = $rowData[$column->alias];
+                $builder->set($columnKey, $value);
+                $row[$columnKey] = $value;
             }
 
             $builder->where($primaryKey, $key);
@@ -199,7 +198,8 @@ class DataTableQuery
             $row = [];
             foreach ($columns as $column)
             {
-                $row[$column->alias] = $rowData[$column->alias];
+                if(isset($rowData[$column->alias]))
+                    $row[$column->alias] = $rowData[$column->alias];
 
                 if($column->type === 'primary')
                     $row[self::DT_ROW_ID] = $rowData[$column->alias];
