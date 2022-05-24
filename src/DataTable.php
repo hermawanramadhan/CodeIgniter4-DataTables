@@ -36,10 +36,7 @@ class DataTable
     {
         $this->query      = new DataTableQuery($builder);
         $this->columnDefs = new DataTableColumnDefs($builder, $primaryKey);
-
         $this->primaryKey = $primaryKey;
-
-        return $this;
     }
 
 

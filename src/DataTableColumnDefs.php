@@ -232,8 +232,10 @@ class DataTableColumnDefs
     }
 
 
-    public function initFromBuilder($builder, $primaryKey)
+    public function initFromBuilder($baseBuilder, $primaryKey)
     {
+        $builder  = clone $baseBuilder;
+
         $QBSelect = Helper::getObjectPropertyValue($builder, 'QBSelect');
 
         if( ! empty($QBSelect) )

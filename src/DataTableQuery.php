@@ -107,14 +107,15 @@ class DataTableQuery
                         break;
                 }
 
+
                 if($this->columnDefs->returnAsObject){
-                    $data[$column->alias] = $value;
+                    $data[$column->alias] = esc($value);
 
                     if($column->type === 'primary')
-                        $data[self::DT_ROW_ID] = $value;
+                        $data[self::DT_ROW_ID] = esc($value);
                 }
                 else
-                    $data[] = $value;
+                    $data[] = esc($value);
             }
 
             $result[] = $data;
@@ -140,10 +141,10 @@ class DataTableQuery
             {
                 if(isset($rowData[$column->alias])){
                     $builder->set($column->key, $rowData[$column->alias]);
-                    $row[$column->alias] = $rowData[$column->alias];
+                    $row[$column->alias] = esc($rowData[$column->alias]);
 
                     if($column->type === 'primary')
-                        $row[self::DT_ROW_ID] = $rowData[$column->alias];
+                        $row[self::DT_ROW_ID] = esc($rowData[$column->alias]);
                 }
             }
 
@@ -173,7 +174,7 @@ class DataTableQuery
             foreach ($rowData as $columnKey => $value)
             {
                 $builder->set($columnKey, $value);
-                $row[$columnKey] = $value;
+                $row[$columnKey] = esc($value);
             }
 
             $builder->where($primaryKey, $key);
@@ -199,10 +200,10 @@ class DataTableQuery
             foreach ($columns as $column)
             {
                 if(isset($rowData[$column->alias]))
-                    $row[$column->alias] = $rowData[$column->alias];
+                    $row[$column->alias] = esc($rowData[$column->alias]);
 
                 if($column->type === 'primary')
-                    $row[self::DT_ROW_ID] = $rowData[$column->alias];
+                    $row[self::DT_ROW_ID] = esc($rowData[$column->alias]);
             }
 
             $builder->where($primaryKey, $key);
