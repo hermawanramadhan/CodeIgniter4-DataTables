@@ -72,6 +72,10 @@ class DataTableQuery
 
         foreach ($queryResult as $row) 
         {
+            //escaping all
+            foreach($row as $key => $val)
+                $row->$key = esc($val);
+
             $data    = [];
             $columns = $this->columnDefs->getColumns();
 
@@ -98,7 +102,7 @@ class DataTableQuery
                         break;
                     
                     default:
-                        $value = esc($row->{$column->alias}); // Escape all other data if not used in formatting types
+                        $value = $row->{$column->alias};
                         break;
                 }
 
