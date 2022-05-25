@@ -41,6 +41,7 @@ $psr4 = [
 
 ## Simple Initializing
 
+### Using CodeIgniter Query Builder
 This is simple basic code just write `DataTable::of($builder)` call method `toJson()` for output
 
 `$builder` is CodeIgniter build-in Query Builder object.
@@ -55,6 +56,24 @@ public function ajaxDatatable()
     $builder = $db->table('customers')->select('customerNumber, customerName, phone, city, country, postalCode');
 
     return DataTable::of($builder)->toJson();
+}
+```
+
+### Using CodeIgniter Model
+You can initialize using `Model` instead `Query Builder` 
+This is simple example basic code
+
+**Controller :**
+```php
+use \Hermawan\DataTables\DataTable;
+use \App\Models\CustomerModel;
+
+public function ajaxDatatable()
+{
+    $customerModel = new CustomerModel();
+    $customerModel->select('customerNumber, customerName, phone, city, country, postalCode');
+
+    return DataTable::of($customerModel)->toJson();
 }
 ```
 
