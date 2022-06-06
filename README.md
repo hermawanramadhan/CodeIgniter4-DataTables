@@ -8,7 +8,9 @@ Server-side Datatables library for CodeIgniter4 PHP framework
 CodeIgniter4-DataTables is CodeIgniter4 Library to handle server-side processing of DataTables jQuery Plugin via AJAX option by using Query Builder CodeIgniter 4
 
 # Documentation
-For more complete example and demo please visit [Documentation here](https://hermawan.dev/codeigniter4-datatables/)
+For more complete example and demo please visit [Documentation here](https://codeigniter4-datatables.hermawan.dev/welcome)
+
+
 
 ## Requirements
 * Codeigniter 4.x
@@ -90,4 +92,4 @@ $(document).ready(function() {
 
 
 
-For more complete example and demo please visit [Documentation here](https://hermawan.dev/codeigniter4-datatables/)
+For more complete example and demo please visit [Documentation here](https://codeigniter4-datatables.hermawan.dev/welcome)
