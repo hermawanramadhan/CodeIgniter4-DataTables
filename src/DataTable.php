@@ -9,21 +9,23 @@ class DataTable
     /**
      * DataTableQuery object.
      *
-     * @var \Hermawan\CodeIgniter4-DataTable\DataTableQuery
+     * @var \Hermawan\DataTables\DataTableQuery
      */
     private $query;
 
 
     /**
-     * DataTablColumns object.
+     * DataTableColumnDefs object.
      *
-     * @var \Hermawan\CodeIgniter4-DataTable\DataTableColumns
+     * @var \Hermawan\DataTables\DataTableColumnDefs
      */
     private $columnDefs;
 
 
     /**
      * Primary key of the table
+     *
+     * @var string
      */
     private $primaryKey;
 
@@ -54,11 +56,12 @@ class DataTable
 
     /**
      * postQuery
+     *
      * @param Closure $postQuery
      */
     public function postQuery($postQuery)
     {
-        $this->query->postQuery($postQuery);
+        $this->query->setPostQuery($postQuery);
         return $this;
     }
 
@@ -79,7 +82,7 @@ class DataTable
      */
     public function addNumbering($column = NULL)
     {
-        $this->columnDefs->addNumbering($column);
+        $this->columnDefs->addNumbering($column, $this->primaryKey);
         return $this;
     }
 
@@ -93,7 +96,7 @@ class DataTable
      */
     public function add($column, $callback, $position = 'last')
     {
-        $this->columnDefs->add($column, $callback, $position);
+        $this->columnDefs->add($column, $callback, $position, $this->primaryKey);
         return $this;
     }
 

@@ -7,10 +7,20 @@ class DataTableQuery
 
     private $builder;
 
+    /**
+     * DataTableColumnDefs object.
+     *
+     * @var \Hermawan\DataTables\DataTableColumnDefs
+     */
     private $columnDefs;
 
     private $filter;
 
+    /**
+     * postQuery
+     *
+     * @var Closure
+     */
     private $postQuery;
 
     private $countResult;
@@ -26,6 +36,11 @@ class DataTableQuery
     }
 
 
+    /**
+     * columnDefs
+     *
+     * @param \Hermawan\DataTables\DataTableColumnDefs $columnDefs
+     */
     public function setColumnDefs($columnDefs)
     {
         $this->columnDefs = $columnDefs;
@@ -33,7 +48,12 @@ class DataTableQuery
     }
 
 
-    public function postQuery($postQuery)
+    /**
+     * postQuery
+     *
+     * @param Closure $postQuery
+     */
+    public function setPostQuery($postQuery)
     {
         $this->postQuery = $postQuery;
     }
@@ -127,7 +147,7 @@ class DataTableQuery
     /* End Generating result */
 
 
-    public function insertData($data, $primaryKey)
+    public function insertData($data)
     {
         $builder = clone $this->builder;
 
@@ -135,7 +155,7 @@ class DataTableQuery
 
         $result = [];
 
-        foreach ($data as $key => $rowData) {
+        foreach ($data as $rowData) {
             $row = [];
             foreach ($columns as $column)
             {
@@ -153,8 +173,13 @@ class DataTableQuery
                     $row[self::DT_ROW_ID] = $builder->db()->insertID();
 
                 $result[] = $row;
-            }
 
+                if($this->postQuery !== NULL)
+                {
+                    $callback = $this->postQuery;
+                    $callback($builder, $row);
+                }
+            }
         }
 
         return $result;
@@ -164,8 +189,6 @@ class DataTableQuery
     public function updateData($data, $primaryKey)
     {
         $builder = clone $this->builder;
-
-        $columns = $this->columnDefs->getColumns();
 
         $result = [];
 
@@ -179,8 +202,15 @@ class DataTableQuery
 
             $builder->where($primaryKey, $key);
 
-            if($builder->update())
+            if($builder->update()){
                 $result[] = $row;
+
+                if($this->postQuery !== NULL)
+                {
+                    $callback = $this->postQuery;
+                    $callback($builder, $row);
+                }
+            }
         }
 
         return $result;
@@ -208,8 +238,15 @@ class DataTableQuery
 
             $builder->where($primaryKey, $key);
 
-            if($builder->delete())
+            if($builder->delete()){
                 $result[] = $row;
+
+                if($this->postQuery !== NULL)
+                {
+                    $callback = $this->postQuery;
+                    $callback($builder, $row);
+                }
+            }
         }
 
         return $result;
@@ -241,7 +278,6 @@ class DataTableQuery
 
     private function queryFilterSearch($builder)
     {
-
         //individual column search (multi column search)
         $columnRequests = Request::get('columns');
         foreach ($columnRequests as $index => $request)
@@ -273,7 +309,6 @@ class DataTableQuery
 
                 $builder->groupEnd();
             }
-
         }
 
         $this->queryFilter($builder);

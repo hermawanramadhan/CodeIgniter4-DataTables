@@ -26,29 +26,18 @@ class DataTableColumnDefs
     }
 
 
-    public function addNumbering($key)
+    public function addNumbering($key, $primaryKey)
     {
-        $column = new Column();
-
-        $column->key        = $key;
-        $column->alias      = $key;
-        $column->type       = 'numbering';
-        $column->searchable = FALSE;
-        $column->orderable  = FALSE;
+        $column = new Column($key, $key, 'numbering', $primaryKey, FALSE, FALSE);
 
         array_unshift($this->columns, $column);
     }
 
 
-    public function add($key, $callback, $position)
+    public function add($key, $callback, $position, $primaryKey)
     {
-        $column = new Column();
+        $column = new Column($key, $key, 'add', $primaryKey, FALSE, FALSE);
 
-        $column->key        = $key;
-        $column->alias      = $key;
-        $column->type       = 'add';
-        $column->searchable = FALSE;
-        $column->orderable  = FALSE;
         $column->callback   = $callback;
 
         switch ($position) {
@@ -101,7 +90,7 @@ class DataTableColumnDefs
         if(! is_array($alias))
             $aliases = [$alias];
 
-        foreach ($this->columns as $index => $column) 
+        foreach ($this->columns as $index => $column)
         {
             if(in_array($column->alias, $aliases))
             {
@@ -141,7 +130,7 @@ class DataTableColumnDefs
 
         if($this->returnAsObject)
         {
-            foreach (Request::get('columns') as $columnRequest) 
+            foreach (Request::get('columns') as $columnRequest)
             {
                 if($columnRequest['name'])
                     $orderableColumns[] = $columnRequest['name'];
@@ -246,8 +235,6 @@ class DataTableColumnDefs
 
             foreach ($sqlParsed['SELECT'] as $index => $selectParsed)
             {
-                $column = new Column();
-
                 // if select column
                 if ($selectParsed['expr_type'] == 'colref')
                 {
