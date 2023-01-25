@@ -36,6 +36,9 @@ class DataTable
      */
     public function __construct($builder, $primaryKey = 'id')
     {
+        if(is_subclass_of($builder, '\CodeIgniter\BaseModel') && method_exists($builder, 'builder')){
+            $builder = $builder->builder();
+        }
         $this->query      = new DataTableQuery($builder);
         $this->columnDefs = new DataTableColumnDefs($builder, $primaryKey);
         $this->primaryKey = $primaryKey;

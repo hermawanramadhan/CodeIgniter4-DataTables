@@ -97,6 +97,10 @@ class DataTableQuery
 
         foreach ($queryResult as $row)
         {
+            //escaping all
+            foreach($row as $key => $val)
+                $row->$key = esc($val);
+
             $data    = [];
             $columns = $this->columnDefs->getColumns();
 
@@ -127,15 +131,14 @@ class DataTableQuery
                         break;
                 }
 
-
                 if($this->columnDefs->returnAsObject){
-                    $data[$column->alias] = esc($value);
+                    $data[$column->alias] = $value;
 
                     if($column->type === 'primary')
-                        $data[self::DT_ROW_ID] = esc($value);
+                        $data[self::DT_ROW_ID] = $value;
                 }
                 else
-                    $data[] = esc($value);
+                    $data[] = $value;
             }
 
             $result[] = $data;

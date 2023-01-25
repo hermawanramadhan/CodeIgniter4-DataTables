@@ -8,7 +8,9 @@ Server-side Datatables library for CodeIgniter4 PHP framework
 CodeIgniter4-DataTables is CodeIgniter4 Library to handle server-side processing of DataTables jQuery Plugin via AJAX option by using Query Builder CodeIgniter 4
 
 # Documentation
-For more complete example and demo please visit [Documentation here](https://hermawan.dev/codeigniter4-datatables/)
+For more complete example and demo please visit [Documentation here](https://codeigniter4-datatables.hermawan.dev/welcome)
+
+
 
 ## Requirements
 * Codeigniter 4.x
@@ -41,6 +43,7 @@ $psr4 = [
 
 ## Simple Initializing
 
+### Using CodeIgniter Query Builder
 This is simple basic code just write `DataTable::of($builder)` call method `toJson()` for output
 
 `$builder` is CodeIgniter build-in Query Builder object.
@@ -55,6 +58,24 @@ public function ajaxDatatable()
     $builder = $db->table('customers')->select('customerNumber, customerName, phone, city, country, postalCode');
 
     return DataTable::of($builder)->toJson();
+}
+```
+
+### Using CodeIgniter Model
+You can initialize using `Model` instead `Query Builder` 
+This is simple example basic code
+
+**Controller :**
+```php
+use \Hermawan\DataTables\DataTable;
+use \App\Models\CustomerModel;
+
+public function ajaxDatatable()
+{
+    $customerModel = new CustomerModel();
+    $customerModel->select('customerNumber, customerName, phone, city, country, postalCode');
+
+    return DataTable::of($customerModel)->toJson();
 }
 ```
 
@@ -106,4 +127,4 @@ $(document).ready(function() {
 ```
 
 
-For more complete example and demo please visit [Documentation here](https://hermawan.dev/codeigniter4-datatables/)
+For more complete example and demo please visit [Documentation here](https://codeigniter4-datatables.hermawan.dev/welcome)
