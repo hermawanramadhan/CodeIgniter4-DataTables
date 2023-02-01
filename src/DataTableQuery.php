@@ -132,10 +132,10 @@ class DataTableQuery
                 }
 
                 if($this->columnDefs->returnAsObject){
-                    $data[$column->alias] = $value;
-
                     if($column->type === 'primary')
                         $data[self::DT_ROW_ID] = $value;
+                    else
+                        $data[$column->alias] = $value;
                 }
                 else
                     $data[] = $value;

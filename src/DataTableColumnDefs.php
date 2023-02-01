@@ -26,17 +26,17 @@ class DataTableColumnDefs
     }
 
 
-    public function addNumbering($key, $primaryKey)
+    public function addNumbering($key)
     {
-        $column = new Column($key, $key, 'numbering', $primaryKey, FALSE, FALSE);
+        $column = new Column($key, $key, 'numbering', FALSE, FALSE);
 
         array_unshift($this->columns, $column);
     }
 
 
-    public function add($key, $callback, $position, $primaryKey)
+    public function add($key, $callback, $position)
     {
-        $column = new Column($key, $key, 'add', $primaryKey, FALSE, FALSE);
+        $column = new Column($key, $key, 'add', FALSE, FALSE);
 
         $column->callback   = $callback;
 
@@ -288,7 +288,10 @@ class DataTableColumnDefs
                     }
                 }
 
-                $this->columns[] = new Column($key, $alias, $primaryKey);
+                $this->columns[] = new Column($key, $alias);
+
+                if ($key === $primaryKey)
+                    $this->columns[] = new Column($key, $alias, 'primary');
             }
         }
         else
@@ -299,15 +302,19 @@ class DataTableColumnDefs
             foreach ($QBFrom as $table)
             {
                 $fieldData = $builder->db()->getFieldData($table);
-                foreach ($fieldData as $field)
-                    $this->columns[] = new Column($table.'.'.$field->name, $field->name, $primaryKey);
+                foreach ($fieldData as $field) {
+                    $this->columns[] = new Column($table.'.'.$field->name, $field->name);
+
+                    if($field->name === $primaryKey)
+                        $this->columns[] = new Column($table.'.'.$field->name, $field->name, 'primary');
+                }
             }
 
             foreach ($QBJoin as $table)
             {
                 $fieldData = $builder->db()->getFieldData($table);
                 foreach ($fieldData as $field)
-                    $this->columns[] = new Column($table.'.'.$field->name, $field->name, $primaryKey);
+                    $this->columns[] = new Column($table.'.'.$field->name, $field->name, $table.'.'.$primaryKey);
             }
         }
 
@@ -319,7 +326,7 @@ class DataTableColumnDefs
     {
         foreach ($this->columns as $column)
         {
-            if($column->$by == $value)
+            if($column->$by == $value && $column->type !== 'primary')
                 return $column;
         }
         return NULL;
