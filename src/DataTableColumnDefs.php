@@ -332,7 +332,7 @@ class DataTableColumnDefs
 
             foreach ($QBFrom as $table) 
             {
-                $fieldData = $builder->db()->getFieldData($table);
+                $fieldData = $builder->db()->getFieldData($this->checkTableName($table));
                 foreach ($fieldData as $field)
                 {
 
@@ -348,7 +348,7 @@ class DataTableColumnDefs
 
             foreach ($QBJoin as $table) 
             {
-                $fieldData = $builder->db()->getFieldData($table);
+                $fieldData = $builder->db()->getFieldData($this->checkTableName($table));
                 foreach ($fieldData as $field)
                 {
                     $column = new Column();
@@ -374,6 +374,18 @@ class DataTableColumnDefs
         }
         return NULL;
     }
-  
+
+     public function checkTableName($tableName)
+    {
+        // if table name have has dot (.) character (ex: database.table or schema.table which is not supported by getFieldData() method)
+        if(strpos($tableName, '.') !== FALSE)
+        {
+            $tableName = explode('.', $tableName);
+            $tableName = end($tableName);
+        }
+
+        return $tableName;
+    }
+
 
 }   // End of DataTableColumnDefs Class.
