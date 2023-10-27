@@ -305,7 +305,7 @@ class DataTableColumnDefs
 
                     if( ! empty($selectParsed['alias']) )
                     {
-                        $key    = substr($QBSelect[$index], -strlen($selectParsed['alias']['base_expr']) + 1);
+                        $key    = substr($QBSelect[$index], 0, -1*strlen($selectParsed['alias']['base_expr']) + 1);
                         $alias  = end($selectParsed['alias']['no_quotes']['parts']);
                     }
                     else
