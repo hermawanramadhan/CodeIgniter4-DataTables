@@ -1,5 +1,5 @@
-<?php 
-namespace Hermawan\DataTables;
+<?php
+namespace DataTables;
 
 
 class DataTableQuery
@@ -91,9 +91,9 @@ class DataTableQuery
                         $value    = $callback($row);
                         break;
                     
-                    case 'edit':
+                    case 'edit': //Add in function call 2 arguments. $column->alias who is the name of the column and $column->variable who is un array with variable from script
                         $callback = $column->callback;
-                        $value    = $callback($row);
+                        $value    = $callback($row,$column->alias,$column->variable);
                         break;
                     
                     case 'format':
