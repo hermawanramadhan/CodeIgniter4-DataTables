@@ -1,5 +1,5 @@
-<?php 
-namespace Hermawan\DataTables;
+<?php
+namespace DataTables;
 
 class DataTableColumnDefs
 {
@@ -67,7 +67,7 @@ class DataTableColumnDefs
         
     }
 
-    public function edit($alias, $callback)
+    public function edit($alias, $callback, $variable = array()) //Add $variable is an array with variables from script
     {
         if($alias)
         {
@@ -76,6 +76,7 @@ class DataTableColumnDefs
             {
                 $column->type     = 'edit';
                 $column->callback = $callback;
+                $column->variable = $variable; // add an array for transmit variable in an array
             }
             
         }
