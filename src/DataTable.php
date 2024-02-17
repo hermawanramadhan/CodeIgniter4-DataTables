@@ -1,5 +1,5 @@
 <?php
-namespace DataTables;
+namespace Hermawan\DataTables;
 
 use \Config\Services;
 
