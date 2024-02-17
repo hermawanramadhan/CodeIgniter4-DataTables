@@ -67,7 +67,7 @@ class DataTableColumnDefs
         
     }
 
-    public function edit($alias, $callback, $variable = array()) //Add $variable is an array with variables from script
+    public function edit($alias, $callback)
     {
         if($alias)
         {
@@ -76,7 +76,6 @@ class DataTableColumnDefs
             {
                 $column->type     = 'edit';
                 $column->callback = $callback;
-                $column->variable = $variable; // add an array for transmit variable in an array
             }
             
         }

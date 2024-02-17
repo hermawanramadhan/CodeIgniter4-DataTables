@@ -79,7 +79,7 @@ class DataTableQuery
             $data    = [];
             $columns = $this->columnDefs->getColumns();
 
-            foreach ($columns as $column) 
+            foreach ($columns as $index => $column) 
             {
                 switch ($column->type) {
                     case 'numbering':
@@ -91,9 +91,16 @@ class DataTableQuery
                         $value    = $callback($row);
                         break;
                     
-                    case 'edit': //Add in function call 2 arguments. $column->alias who is the name of the column and $column->variable who is un array with variable from script
+                    case 'edit':
                         $callback = $column->callback;
-                        $value    = $callback($row,$column->alias,$column->variable);
+
+                        $value = $callback($row, [
+                            'index'      => $index,
+                            'key'        => $column->key,
+                            'alias'      => $column->alias,
+                            'searchable' => $column->searchable,
+                            'orderable'  => $column->orderable,
+                        ]);
                         break;
                     
                     case 'format':
