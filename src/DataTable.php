@@ -1,5 +1,5 @@
-<?php 
-namespace Hermawan\DataTables;
+<?php
+namespace DataTables;
 
 use \Config\Services;
 
@@ -97,9 +97,9 @@ class DataTable
      * @param String $column
      * @param Closure $callback
      */
-    public function edit($column, $callback)
+    public function edit($column, $callback,$variable = array()) //Add $variable is an array with variables from script
     {
-        $this->columnDefs->edit($column, $callback);
+        $this->columnDefs->edit($column, $callback,$variable); //Add $variable is an array with variables from script
         return $this;
     }
 
