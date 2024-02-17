@@ -105,7 +105,13 @@ class DataTableQuery
                     
                     case 'format':
                         $callback = $column->callback;
-                        $value    = $callback($row->{$column->alias});
+                        $value    = $callback($row->{$column->alias}, [
+                            'index'      => $index,
+                            'key'        => $column->key,
+                            'alias'      => $column->alias,
+                            'searchable' => $column->searchable,
+                            'orderable'  => $column->orderable,
+                        ]);
                         break;
                     
                     default:
